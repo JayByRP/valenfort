@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S.H.I.E.L.D Database</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Open+Sans:400,400italic,700,700italic,300italic,300|Inconsolata" rel="stylesheet" type="text/css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/2.2.2/isotope.pkgd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js"></script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 5px;
+            border: 2px solid #fff;
+            background-color: #acacac;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            border-radius: 6px;
+            background-color: #acacac;
+        }
+
+        ::-webkit-scrollbar:horizontal {
+            height: 5px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            color: #828282;
+            font-weight: 100;
+            font-size: 9px;
+            font-family: "Open Sans", calibri, Helvetica, sans-serif;
+            line-height: 100%;
+            background: #000;
+        }
+
+        #top {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 99999;
+            width: 100%;
+            background: #000;
+            color: #fff;
+            padding: 15px 20px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .database-title {
+            font-family: "Montserrat", Helvetica, sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #fff;
+        }
+
+        .directory-text {
+            font-family: "Open Sans", Helvetica, sans-serif;
+            font-size: 14px;
+            color: #828282;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: 250px;
+            height: calc(100vh - 60px);
+            background: #f5f5f5;
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        .filters-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .filters-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #323232;
+        }
+
+        .clear-filters {
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #828282;
+            position: relative;
+        }
+
+        .clear-filters i {
+            font-size: 16px;
+        }
+
+        .clear-filters:hover {
+            color: #000;
+        }
+
+        .clear-filters:hover::after {
+            content: "Clear filters";
+            position: absolute;
+            right: 30px;
+            background: #323232;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 10px;
+            white-space: nowrap;
+        }
+
+        .filter-section {
+            margin-bottom: 20px;
+        }
+
+        .filter-title {
+            font-family: "Montserrat", Helvetica, sans-serif;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #323232;
+            margin-bottom: 10px;
+        }
+
+        .button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 5px 0;
+            font-size: 11px;
+            color: #828282;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .button:hover {
+            color: #000;
+        }
+
+        .button.is-checked {
+            color: #000;
+            font-weight: 700;
+        }
+
+        .button.is-checked::before {
+            content: "\f105";
+            font-family: FontAwesome;
+            margin-right: 5px;
+        }
+
+        .grid {
+            margin-left: 250px;
+            margin-top: 60px;
+            padding: 25px;
+            background: #e7e7e7;
+            min-height: calc(100vh - 60px);
+            display: block;
+        }
+
+        .grid:after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+
+        .grid-item {
+            background: #fff;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 200px;
+            margin: 12.5px;
+            float: left;
+        }
+
+        .grid-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .name {
+            font-family: "Montserrat", Helvetica, sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            order: -1;
+        }
+
+        .firstname {
+            font-size: 14px;
+            font-weight: 700;
+            color: #323232;
+        }
+
+        .surname {
+            font-size: 12px;
+            color: #828282;
+            margin-top: 5px;
+        }
+
+        .grid-item img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 0 15px 0;
+        }
+
+        .face-claim {
+            font-size: 11px;
+            color: #828282;
+            font-style: italic;
+            margin-top: 10px;
+            text-transform: none;
+        }
+
+        .grid-item {
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .grid-item.is-filtering {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+    </style>
+</head>
+<body>
+    <div id="top">
+        <div class="database-title">S.H.I.E.L.D  DATABASE</div>
+        <div class="directory-text">Character Directory</div>
+    </div>
+    <div class="sidebar">
+        <div class="filters-header">
+            <div class="filters-title">Filters</div>
+            <div class="clear-filters">
+                <i class="fas fa-times"></i>
+            </div>
+        </div>
+        <div class="filter-section" data-filter-group="gender">
+            <div class="filter-title">Gender</div>
+            <button class="button is-checked" data-filter="*">Show All</button>
+            <button class="button" data-filter="[data-gender='male']">Male</button>
+            <button class="button" data-filter="[data-gender='female']">Female</button>
+            <button class="button" data-filter="[data-gender='non-binary']">Non-binary</button>
+            <button class="button" data-filter="[data-gender='other']">Other</button>
+        </div>
+        <div class="filter-section" data-filter-group="sexuality">
+            <div class="filter-title">Sexuality</div>
+            <button class="button is-checked" data-filter="*">Show All</button>
+            <button class="button" data-filter="[data-sexuality='heterosexual']">Heterosexual</button>
+            <button class="button" data-filter="[data-sexuality='homosexual']">Homosexual</button>
+            <button class="button" data-filter="[data-sexuality='bisexual']">Bisexual</button>
+            <button class="button" data-filter="[data-sexuality='pansexual']">Pansexual</button>
+            <button class="button" data-filter="[data-sexuality='asexual']">Asexual</button>
+            <button class="button" data-filter="[data-sexuality='other']">Other</button>
+        </div>
+        <div class="filter-section" data-filter-group="program">
+            <div class="filter-title">Program</div>
+            <button class="button is-checked" data-filter="*">Show All</button>
+            <button class="button" data-filter="[data-program='operations']">Operations</button>
+            <button class="button" data-filter="[data-program='intelligence']">Intelligence</button>
+            <button class="button" data-filter="[data-program='sci_tech']">Sci-Tech</button>
+        </div>
+        <div class="filter-section" data-filter-group="year">
+            <div class="filter-title">Year</div>
+            <button class="button is-checked" data-filter="*">Show All</button>
+            <button class="button" data-filter="[data-year='1st Year']">1st Year</button>
+            <button class="button" data-filter="[data-year='2nd Year']">2nd Year</button>
+            <button class="button" data-filter="[data-year='3rd Year']">3rd Year</button>
+            <button class="button" data-filter="[data-year='4th Year']">4th Year</button>
+        </div>
+    </div>
+    <div class="grid"></div>
+
+    <script>
+        $(document).ready(function() {
+            $.ajax({
+                url: "/api/characters",
+                method: "GET",
+                success: function(characters) {
+                    // Sort characters alphabetically by full name
+                    characters.sort((a, b) => a.name.localeCompare(b.name));
+
+                    const characterHTML = characters.map(character => {
+                        const nameParts = character.name.split(" ");
+                        const firstName = nameParts[0];
+                        const surname = nameParts.slice(1).join(" ");
+
+                        return `
+                            <div class="grid-item" 
+                                data-gender="${character.gender?.toLowerCase()}"
+                                data-sexuality="${character.sexuality?.toLowerCase()}"
+                                data-program="${character.program?.toLowerCase()}"
+                                data-year="${character.year}">
+                                <div class="name">
+                                    <div class="firstname">${firstName}</div>
+                                    <div class="surname">${surname}</div>
+                                </div>
+                                <div class="image-container">
+                                    ${character.bio ? 
+                                        `<a href="${character.bio}" target="_blank">
+                                            <img src="${character.image}" alt="${character.name}">
+                                        </a>` : 
+                                        `<img src="${character.image}" alt="${character.name}">`
+                                    }
+                                </div>
+                                <div class="face-claim">${character.faceclaim}</div>
+                            </div>
+                        `;
+                    }).join("");
+
+                    $(".grid").html(characterHTML);
+
+                    // Initialize Isotope
+                    var $grid = $('.grid').isotope({
+                        itemSelector: '.grid-item',
+                        layoutMode: 'fitRows',
+                        transitionDuration: '0.4s',
+                        stagger: 30,
+                        fitRows: {
+                            gutter: 10,
+                            equalheight: true
+                        }
+                    });
+
+                    // Store current filters
+                    var filters = {};
+
+                    // Handle filter button clicks
+                    $('.filter-section').on('click', 'button', function() {
+                        var $this = $(this);
+                        var $filterGroup = $this.parents('.filter-section');
+                        var filterGroup = $filterGroup.attr('data-filter-group');
+                        var filterValue = $this.attr('data-filter');
+                        
+                        // For "Show All", remove this filter group from the filters object
+                        if (filterValue === '*') {
+                            delete filters[filterGroup];
+                        } else {
+                            filters[filterGroup] = filterValue;
+                        }
+                        
+                        // Combine all filters
+                        var combinedFilter = '';
+                        for (var prop in filters) {
+                            combinedFilter += filters[prop];
+                        }
+                        
+                        // If no filters are active, show all
+                        if (combinedFilter === '') {
+                            combinedFilter = '*';
+                        }
+
+                        // Update active filter buttons
+                        $filterGroup.find('.is-checked').removeClass('is-checked');
+                        $this.addClass('is-checked');
+                        
+                        // Apply filter
+                        $grid.isotope({ filter: combinedFilter });
+                    });
+
+                    // Handle clear filters
+                    $('.clear-filters').on('click', function() {
+                        filters = {};
+                        $('.button.is-checked').removeClass('is-checked');
+                        $('.filter-section button[data-filter="*"]').addClass('is-checked');
+                        $grid.isotope({ filter: '*' });
+                    });
+
+                    // Layout Isotope after images have loaded
+                    $grid.imagesLoaded().progress(function() {
+                        $grid.isotope('layout');
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching characters:", error);
+                    $(".grid").html("<p class='error-message'>Error loading characters. Please try again later.</p>");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
