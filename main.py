@@ -254,7 +254,7 @@ async def show_character(interaction: Interaction, name: str):
 @tree.command(name="character_list", description="Shows the list of all characters")
 async def list_all_characters(interaction):
     try:
-        website_url = "https://shield-hzo0.onrender.com/"
+        website_url = "https://valenfort-database.onrender.com/"
         await interaction.response.send_message(f"📚 View the complete character list [here]({website_url})")
     except Exception as e:
         await interaction.response.send_message("❌ An error occurred while processing your request.", ephemeral=True)
