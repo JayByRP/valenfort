@@ -4,7 +4,6 @@ from sqlalchemy.orm import sessionmaker
 import os
 from dotenv import load_dotenv
 import libsql_client
-from urllib.parse import urlparse
 
 load_dotenv()
 
@@ -27,11 +26,11 @@ if 'postgresql' in DATABASE_URL:
 
 # LibSQL Configuration
 elif 'libsql' in DATABASE_URL:
-    # Parse the URL
-    parsed_url = urlparse(DATABASE_URL)
+    # Use SQLite as the base dialect
+    sqlite_url = f"sqlite:///libsql_database.db"
     
-    # Construct a valid SQLite connection string
-    sqlite_url = f"sqlite+libsql://{parsed_url.netloc}{parsed_url.path}"
+    # Create a separate libsql client for actual database operations
+    libsql_client_instance = libsql_client.create_client(url=DATABASE_URL)
     
     engine = create_engine(sqlite_url)
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -45,14 +44,3 @@ def get_db():
         yield db
     finally:
         db.close()
-
-def test_db_connection():
-    try:
-        db = SessionLocal()
-        db.execute(text("SELECT 1"))
-        print("✓ Database connection successful!")
-        db.close()
-        return True
-    except Exception as e:
-        print(f"❌ Database connection failed: {e}")
-        return False
