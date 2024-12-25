@@ -325,19 +325,29 @@ async def on_ready():
 async def start_discord_bot():
     await client.start(os.getenv("DISCORD_TOKEN"))
 
-def upgrade_database():
+def create_database():
     db = SessionLocal()
     try:
         with db.begin():
             db.execute(text("""
-                ALTER TABLE characters 
-                RENAME COLUMN program TO house;
+                CREATE TABLE IF NOT EXISTS characters (
+                    name VARCHAR PRIMARY KEY,
+                    faceclaim VARCHAR NOT NULL,
+                    image VARCHAR NOT NULL,
+                    bio TEXT NOT NULL,
+                    password VARCHAR NOT NULL,
+                    gender ENUM('male', 'female', 'non_binary') NULL,
+                    sexuality ENUM('heterosexual', 'homosexual', 'bisexual') NULL,
+                    house ENUM('gryffindor', 'hufflepuff', 'ravenclaw', 'slytherin') NULL,
+                    year ENUM('first', 'second', 'third', 'fourth') NULL
+                );
             """))
-        logger.info("Database upgraded successfully: program column renamed to house.")
+        logger.info("Database created successfully: characters table initialized.")
     except Exception as e:
-        logger.error(f"Database upgrade failed: {e}")
+        logger.error(f"Database creation failed: {e}")
     finally:
         db.close()
+
 
 # Ping function for both bot and database every 60 seconds
 async def ping_services():
