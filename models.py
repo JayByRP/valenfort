@@ -51,5 +51,5 @@ class DBCharacter(Base):
     password = Column(String, nullable=False)
     gender = Column(Enum(GenderEnum), nullable=True)
     sexuality = Column(Enum(SexualityEnum), nullable=True)
-    program = Column(Enum(HouseEnum), nullable=True)
+    house = Column(Enum(HouseEnum), nullable=True)
     year = Column(Enum(YearEnum), nullable=True)
