@@ -283,12 +283,18 @@
             <button class="button" data-filter="[data-sexuality='asexual']">Asexual</button>
             <button class="button" data-filter="[data-sexuality='other']">Other</button>
         </div>
-        <div class="filter-section" data-filter-group="program">
-            <div class="filter-title">Program</div>
-            <button class="button is-checked" data-filter="*">Show All</button>
-            <button class="button" data-filter="[data-program='operations']">Operations</button>
-            <button class="button" data-filter="[data-program='intelligence']">Intelligence</button>
-            <button class="button" data-filter="[data-program='sci_tech']">Sci-Tech</button>
+        <div class="filter-section" data-filter-group="house">
+            <div class="filter-title">House</div>
+            <button class="button" data-filter="[data-house='aphrodite']">Aphrodite</button>
+            <button class="button" data-filter="[data-house='apollo']">Apollo</button>
+            <button class="button" data-filter="[data-house='athena']">Athena</button>
+            <button class="button" data-filter="[data-house='dionysus']">Dionysus</button>
+            <button class="button" data-filter="[data-house='hades']">Hades</button>
+            <button class="button" data-filter="[data-house='hephaestus']">Hephaestus</button>
+            <button class="button" data-filter="[data-house='hecate']">Hecate</button>
+            <button class="button" data-filter="[data-house='nyx']">Nyx</button>
+            <button class="button" data-filter="[data-house='poseidon']">Poseidon</button>
+            <button class="button" data-filter="[data-house='zeus']">Zeus</button>
         </div>
         <div class="filter-section" data-filter-group="year">
             <div class="filter-title">Year</div>
@@ -297,6 +303,8 @@
             <button class="button" data-filter="[data-year='2nd Year']">2nd Year</button>
             <button class="button" data-filter="[data-year='3rd Year']">3rd Year</button>
             <button class="button" data-filter="[data-year='4th Year']">4th Year</button>
+            <button class="button" data-filter="[data-year='5th Year']">5th Year</button>
+            <button class="button" data-filter="[data-year='6th Year']">6th Year</button>
         </div>
     </div>
     <div class="grid"></div>
@@ -319,7 +327,7 @@
                             <div class="grid-item" 
                                 data-gender="${character.gender?.toLowerCase()}"
                                 data-sexuality="${character.sexuality?.toLowerCase()}"
-                                data-program="${character.program?.toLowerCase()}"
+                                data-house="${character.house?.toLowerCase()}"
                                 data-year="${character.year}">
                                 <div class="name">
                                     <div class="firstname">${firstName}</div>
