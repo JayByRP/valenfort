@@ -336,15 +336,15 @@ def upgrade_database():
                     image VARCHAR NOT NULL,
                     bio TEXT NOT NULL,
                     password VARCHAR NOT NULL,
-                    gender ENUM('male', 'female', 'non_binary', 'other') NULL,
-                    sexuality ENUM('heterosexual', 'homosexual', 'bisexual', 'pansexual', 'asexual', 'other') NULL,
-                    house ENUM('Aphrodite', 'Apollo', 'Athena', 'Dionysus', 'Hades', 'Hephaestus', 'Hecate', 'Nyx', 'Poseidon', 'Zeus') NULL,
-                    year ENUM('1st Year', '2nd Year', '3rd Year', '4th Year', '5th Year', '6th Year') NULL
+                    gender TEXT NULL CHECK(gender IN ('male', 'female', 'non_binary', 'other')),
+                    sexuality TEXT NULL CHECK(sexuality IN ('heterosexual', 'homosexual', 'bisexual', 'pansexual', 'asexual', 'other')),
+                    house TEXT NULL CHECK(house IN ('Aphrodite', 'Apollo', 'Athena', 'Dionysus', 'Hades', 'Hephaestus', 'Hecate', 'Nyx', 'Poseidon', 'Zeus')),
+                    year TEXT NULL CHECK(year IN ('1st Year', '2nd Year', '3rd Year', '4th Year', '5th Year', '6th Year'))
                 );
             """))
-        logger.info("Database created successfully: characters table initialized.")
+        logger.info("Database upgraded successfully: characters table initialized.")
     except Exception as e:
-        logger.error(f"Database creation failed: {e}")
+        logger.error(f"Database upgrade failed: {e}")
     finally:
         db.close()
 
