@@ -325,7 +325,7 @@ async def on_ready():
 async def start_discord_bot():
     await client.start(os.getenv("DISCORD_TOKEN"))
 
-def create_database():
+def upgrade_database():
     db = SessionLocal()
     try:
         with db.begin():
@@ -336,10 +336,10 @@ def create_database():
                     image VARCHAR NOT NULL,
                     bio TEXT NOT NULL,
                     password VARCHAR NOT NULL,
-                    gender ENUM('male', 'female', 'non_binary') NULL,
-                    sexuality ENUM('heterosexual', 'homosexual', 'bisexual') NULL,
-                    house ENUM('gryffindor', 'hufflepuff', 'ravenclaw', 'slytherin') NULL,
-                    year ENUM('first', 'second', 'third', 'fourth') NULL
+                    gender ENUM('male', 'female', 'non_binary', 'other') NULL,
+                    sexuality ENUM('heterosexual', 'homosexual', 'bisexual', 'pansexual', 'asexual', 'other') NULL,
+                    house ENUM('Aphrodite', 'Apollo', 'Athena', 'Dionysus', 'Hades', 'Hephaestus', 'Hecate', 'Nyx', 'Poseidon', 'Zeus') NULL,
+                    year ENUM('1st Year', '2nd Year', '3rd Year', '4th Year', '5th Year', '6th Year') NULL
                 );
             """))
         logger.info("Database created successfully: characters table initialized.")
