@@ -2,11 +2,19 @@ from sqlalchemy import Column, String, Text, Enum
 from database import Base
 import enum
 
-# Define Program Enum
-class ProgramEnum(enum.Enum):
-    operations = "Operations"
-    intelligence = "Intelligence"
-    sci_tech = "Sci-Tech"
+# Define House Enum
+class HouseEnum(enum.Enum):
+    aphrodite = "Aphrodite"
+    apollo = "Apollo"
+    athena = "Athena"
+    dionysus = "Dionysus"
+    hades = "Hades"
+    hephaestus = "Hephaestus"
+    hecate = "Hecate"
+    nyx = "Nyx"
+    poseidon = "Poseidon"
+    zeus = "Zeus"
+    
 
 # Define Year Enum
 class YearEnum(enum.Enum):
@@ -14,6 +22,8 @@ class YearEnum(enum.Enum):
     second = "2nd Year"
     third = "3rd Year"
     fourth = "4th Year"
+    fifth = "5th Year"
+    sixth = "6th Year"
 
 # Define Gender Enum
 class GenderEnum(enum.Enum):
@@ -41,5 +51,5 @@ class DBCharacter(Base):
     password = Column(String, nullable=False)
     gender = Column(Enum(GenderEnum), nullable=True)
     sexuality = Column(Enum(SexualityEnum), nullable=True)
-    program = Column(Enum(ProgramEnum), nullable=True)
+    program = Column(Enum(HouseEnum), nullable=True)
     year = Column(Enum(YearEnum), nullable=True)

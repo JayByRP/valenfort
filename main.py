@@ -13,7 +13,7 @@ from websockets import serve
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 from database import Base, engine, SessionLocal
-from models import DBCharacter, GenderEnum, SexualityEnum, YearEnum, ProgramEnum
+from models import DBCharacter, GenderEnum, SexualityEnum, YearEnum, HouseEnum
 from dotenv import load_dotenv
 import json
 import re
@@ -47,7 +47,7 @@ class Character(BaseModel):
     password: str
     gender: GenderEnum
     sexuality: SexualityEnum
-    program: ProgramEnum
+    house: HouseEnum
     year: YearEnum
 
 # Helper functions
@@ -85,14 +85,14 @@ async def gender_autocomplete(interaction: Interaction, current: str):
 async def sexuality_autocomplete(interaction: Interaction, current: str):
     return [Choice(name=sexuality.value, value=sexuality.value) for sexuality in SexualityEnum if sexuality.value.lower().startswith(current.lower())]
 
-async def program_autocomplete(interaction: Interaction, current: str):
-    return [Choice(name=program.value, value=program.value) for program in ProgramEnum if program.value.lower().startswith(current.lower())]
+async def house_autocomplete(interaction: Interaction, current: str):
+    return [Choice(name=house.value, value=house.value) for house in HouseEnum if house.value.lower().startswith(current.lower())]
 
 async def year_autocomplete(interaction: Interaction, current: str):
     return [Choice(name=year.value, value=year.value) for year in YearEnum if year.value.lower().startswith(current.lower())]
 
 @tree.command(name="create_character", description="Creates a new character profile")
-@app_commands.autocomplete(gender=gender_autocomplete, sexuality=sexuality_autocomplete, program=program_autocomplete, year=year_autocomplete)
+@app_commands.autocomplete(gender=gender_autocomplete, sexuality=sexuality_autocomplete, house=house_autocomplete, year=year_autocomplete)
 async def create_character(
     interaction: Interaction, 
     name: str, 
@@ -102,7 +102,7 @@ async def create_character(
     password: str, 
     gender: str, 
     sexuality: str, 
-    program: str,
+    house: str,
     year: str
 ):
     try:
@@ -120,7 +120,7 @@ async def create_character(
                 password=password,
                 gender=GenderEnum(gender),
                 sexuality=SexualityEnum(sexuality),
-                program=ProgramEnum(program),
+                house=HouseEnum(house),
                 year=YearEnum(year)
             )
             db.add(character)
@@ -134,7 +134,7 @@ async def create_character(
                 'bio': bio,
                 'gender': gender,
                 'sexuality': sexuality,
-                'program': program,
+                'house': house,
                 'year': year
             })
         except IntegrityError:
@@ -146,7 +146,7 @@ async def create_character(
         logging.error(f"Error in create_character: {e}")
 
 @tree.command(name="edit_character", description="Edits an existing character")
-@app_commands.autocomplete(name=character_name_autocomplete, gender=gender_autocomplete, sexuality=sexuality_autocomplete, program=program_autocomplete, year=year_autocomplete)
+@app_commands.autocomplete(name=character_name_autocomplete, gender=gender_autocomplete, sexuality=sexuality_autocomplete, house=house_autocomplete, year=year_autocomplete)
 async def edit_character(
     interaction: Interaction, 
     name: str, 
@@ -157,7 +157,7 @@ async def edit_character(
     bio: Optional[str] = None, 
     gender: Optional[str] = None, 
     sexuality: Optional[str] = None,
-    program: Optional[str] = None,
+    house: Optional[str] = None,
     year: Optional[str] = None
 ):
     try:
@@ -187,8 +187,8 @@ async def edit_character(
                 character.gender = GenderEnum(gender)
             if sexuality:
                 character.sexuality = SexualityEnum(sexuality)
-            if program:
-                character.program = ProgramEnum(program)
+            if house:
+                character.house = HouseEnum(house)
             if year:
                 character.year = YearEnum(year)
             db.commit()
@@ -294,7 +294,7 @@ async def get_characters():
                     "bio": c.bio,
                     "gender": c.gender.value,
                     "sexuality": c.sexuality.value,
-                    "program": c.program.value,
+                    "house": c.house.value,
                     "year": c.year.value
                 } 
                 for c in characters
@@ -331,21 +331,9 @@ def upgrade_database():
         with db.begin():
             db.execute(text("""
                 ALTER TABLE characters 
-                ADD COLUMN gender VARCHAR(255);
+                RENAME COLUMN program TO house;
             """))
-            db.execute(text("""
-                ALTER TABLE characters 
-                ADD COLUMN sexuality VARCHAR(255);
-            """))
-            db.execute(text("""
-                ALTER TABLE characters 
-                ADD COLUMN program VARCHAR(255);
-            """))
-            db.execute(text("""
-                ALTER TABLE characters 
-                ADD COLUMN year VARCHAR(255);
-            """))
-        logger.info("Database upgraded successfully: program and year columns added.")
+        logger.info("Database upgraded successfully: program column renamed to house.")
     except Exception as e:
         logger.error(f"Database upgrade failed: {e}")
     finally:
@@ -377,7 +365,7 @@ async def ping_services():
 # Lifespan
 @app.on_event("startup")
 async def startup_event():
-    #upgrade_database()
+    upgrade_database()
     asyncio.create_task(start_discord_bot())
     asyncio.create_task(ping_services())
 
