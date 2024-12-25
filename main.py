@@ -375,7 +375,7 @@ async def ping_services():
 # Lifespan
 @app.on_event("startup")
 async def startup_event():
-    upgrade_database()
+    #upgrade_database()
     asyncio.create_task(start_discord_bot())
     asyncio.create_task(ping_services())
 
