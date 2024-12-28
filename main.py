@@ -62,7 +62,7 @@ def verify_character(name: str, password: str) -> bool:
 def is_valid_image_url(url: str) -> bool:
     if not url:
         return False
-    pattern = re.compile(r'^https://.*\.(jpg|jpeg|png)$', re.IGNORECASE)
+    pattern = re.compile(r'^https://.*\.(jpg|jpeg|png|gif)$', re.IGNORECASE)
     return bool(pattern.match(url)) and len(url) <= 2048
 
 async def broadcast_message(message: dict):
@@ -107,7 +107,7 @@ async def create_character(
 ):
     try:
         if not is_valid_image_url(image):
-            await interaction.response.send_message("❌ Invalid image URL. Please provide an HTTPS URL ending with .jpg, .jpeg, or .png.", ephemeral=True)
+            await interaction.response.send_message("❌ Invalid image URL. Please provide an HTTPS URL ending with .jpg, .jpeg, .png or .gif.", ephemeral=True)
             return
 
         db = SessionLocal()
