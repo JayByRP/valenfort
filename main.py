@@ -33,7 +33,7 @@ client = Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 # Initialize database
-Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine, checkfirst=True)
 
 # Global websocket connections
 websocket_connections = set()
