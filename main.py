@@ -238,8 +238,7 @@ async def show_character(interaction: Interaction, name: str):
                 await interaction.response.send_message("❌ Character not found.", ephemeral=True)
                 return
             embed = Embed(
-                title=character.name.upper(),
-                description=f"[Character Sheet]({character.bio})" if character.bio.startswith('http') else "N/A",
+                title=f"{character.name.upper()} [Character Sheet]" if character.bio.startswith('http') else character.name.upper(),
                 color=Color.from_str("#fffdd0")
             )
             embed.set_image(url=character.image)
