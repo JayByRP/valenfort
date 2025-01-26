@@ -1,18 +1,15 @@
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 DATABASE_URL = os.getenv('DATABASE_URL')
 
-if not DATABASE_URL:
-    raise ValueError("DATABASE_URL environment variable is required")
+# Convert LibSQL URL to SQLite file path
+sqlite_path = DATABASE_URL.replace('libsql://', '')
 
-# Use the full Turso/LibSQL URL directly
-engine = create_engine(DATABASE_URL)
+engine = create_engine(f'sqlite:///{sqlite_path}', 
+                       connect_args={'check_same_thread': False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
