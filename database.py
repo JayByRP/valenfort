@@ -5,13 +5,17 @@ import os
 
 DATABASE_URL = os.getenv('DATABASE_URL')
 
-# Convert LibSQL URL to SQLite file path
-sqlite_path = DATABASE_URL.replace('libsql://', '')
+# Explicitly handle Turso LibSQL URL
+sqlite_path = DATABASE_URL.split('//')[1].split('.')[0] + '.db'
 
 engine = create_engine(f'sqlite:///{sqlite_path}', 
                        connect_args={'check_same_thread': False})
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
+
+# Ensure tables are created
+Base.metadata.create_all(bind=engine, checkfirst=True)
 
 def get_db():
     db = SessionLocal()
