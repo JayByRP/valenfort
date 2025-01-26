@@ -324,30 +324,6 @@ async def on_ready():
 async def start_discord_bot():
     await client.start(os.getenv("DISCORD_TOKEN"))
 
-def upgrade_database():
-    db = SessionLocal()
-    try:
-        with db.begin():
-            db.execute(text("""
-                CREATE TABLE IF NOT EXISTS characters (
-                    name VARCHAR PRIMARY KEY,
-                    faceclaim VARCHAR NOT NULL,
-                    image VARCHAR NOT NULL,
-                    bio TEXT NOT NULL,
-                    password VARCHAR NOT NULL,
-                    gender TEXT NULL CHECK(gender IN ('male', 'female', 'non_binary', 'other')),
-                    sexuality TEXT NULL CHECK(sexuality IN ('heterosexual', 'homosexual', 'bisexual', 'pansexual', 'asexual', 'other')),
-                    house TEXT NULL CHECK(house IN ('Aphrodite', 'Apollo', 'Athena', 'Dionysus', 'Hades', 'Hephaestus', 'Hecate', 'Nyx', 'Poseidon', 'Zeus')),
-                    year TEXT NULL CHECK(year IN ('1st Year', '2nd Year', '3rd Year', '4th Year', '5th Year', '6th Year'))
-                );
-            """))
-        logger.info("Database upgraded successfully: characters table initialized.")
-    except Exception as e:
-        logger.error(f"Database upgrade failed: {e}")
-    finally:
-        db.close()
-
-
 # Ping function for both bot and database every 60 seconds
 async def ping_services():
     while True:
@@ -374,7 +350,6 @@ async def ping_services():
 # Lifespan
 @app.on_event("startup")
 async def startup_event():
-    #upgrade_database()
     asyncio.create_task(start_discord_bot())
     asyncio.create_task(ping_services())
 
